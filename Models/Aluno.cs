@@ -3,11 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BCCAlunos2024.Models
 {
-    public enum Periodo {Manha, Tarde, Noite}
+    
 
     [Table("Alunos")]
     public class Aluno
     {
+        public enum Periodo { Manha, Tarde, Noite }
+
         [Display(Name ="ID: ")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,10 +21,12 @@ namespace BCCAlunos2024.Models
         public string nome { get; set; }
 
         [Display(Name = "Data Aniversário: ")]
+        [Required(ErrorMessage = "Campo Data Aniversário é obrigatório")]
         public DateTime aniversario { get; set; }
 
         [Display(Name = "Curso: ")]
         public Curso curso { get; set; }
+        [Display(Name = "Curso: ")]
         public int cursoID { get; set; }
 
         [Display(Name ="Período: ")]
