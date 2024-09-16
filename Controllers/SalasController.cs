@@ -9,23 +9,22 @@ using BCCAlunos2024.Models;
 
 namespace BCCAlunos2024.Controllers
 {
-    public class CursosController : Controller
+    public class SalasController : Controller
     {
         private readonly Contexto _context;
 
-        public CursosController(Contexto context)
+        public SalasController(Contexto context)
         {
             _context = context;
         }
 
-        // GET: Cursos
+        // GET: Salas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cursos.ToListAsync());
-                    
+            return View(await _context.Salas.ToListAsync());
         }
 
-        // GET: Cursos/Details/5
+        // GET: Salas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +32,39 @@ namespace BCCAlunos2024.Controllers
                 return NotFound();
             }
 
-            var curso = await _context.Cursos
+            var sala = await _context.Salas
                 .FirstOrDefaultAsync(m => m.id == id);
-            if (curso == null)
+            if (sala == null)
             {
                 return NotFound();
             }
 
-            return View(curso);
+            return View(sala);
         }
 
-        // GET: Cursos/Create
+        // GET: Salas/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Cursos/Create
+        // POST: Salas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,descricao")] Curso curso)
+        public async Task<IActionResult> Create([Bind("id,descricao,equipamentos,situacao")] Sala sala)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(curso);
+                _context.Add(sala);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(curso);
+            return View(sala);
         }
 
-        // GET: Cursos/Edit/5
+        // GET: Salas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +72,22 @@ namespace BCCAlunos2024.Controllers
                 return NotFound();
             }
 
-            var curso = await _context.Cursos.FindAsync(id);
-            if (curso == null)
+            var sala = await _context.Salas.FindAsync(id);
+            if (sala == null)
             {
                 return NotFound();
             }
-            return View(curso);
+            return View(sala);
         }
 
-        // POST: Cursos/Edit/5
+        // POST: Salas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,descricao")] Curso curso)
+        public async Task<IActionResult> Edit(int id, [Bind("id,descricao,equipamentos,situacao")] Sala sala)
         {
-            if (id != curso.id)
+            if (id != sala.id)
             {
                 return NotFound();
             }
@@ -97,12 +96,12 @@ namespace BCCAlunos2024.Controllers
             {
                 try
                 {
-                    _context.Update(curso);
+                    _context.Update(sala);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CursoExists(curso.id))
+                    if (!SalaExists(sala.id))
                     {
                         return NotFound();
                     }
@@ -113,10 +112,10 @@ namespace BCCAlunos2024.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(curso);
+            return View(sala);
         }
 
-        // GET: Cursos/Delete/5
+        // GET: Salas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +123,34 @@ namespace BCCAlunos2024.Controllers
                 return NotFound();
             }
 
-            var curso = await _context.Cursos
+            var sala = await _context.Salas
                 .FirstOrDefaultAsync(m => m.id == id);
-            if (curso == null)
+            if (sala == null)
             {
                 return NotFound();
             }
 
-            return View(curso);
+            return View(sala);
         }
 
-        // POST: Cursos/Delete/5
+        // POST: Salas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var curso = await _context.Cursos.FindAsync(id);
-            if (curso != null)
+            var sala = await _context.Salas.FindAsync(id);
+            if (sala != null)
             {
-                _context.Cursos.Remove(curso);
+                _context.Salas.Remove(sala);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CursoExists(int id)
+        private bool SalaExists(int id)
         {
-            return _context.Cursos.Any(e => e.id == id);
+            return _context.Salas.Any(e => e.id == id);
         }
     }
 }
