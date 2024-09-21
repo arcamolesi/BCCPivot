@@ -49,7 +49,7 @@ namespace BCCAlunos2024.Controllers
         public IActionResult Create()
         {
             ViewData["alunoID"] = new SelectList(_context.Alunos, "id", "nome");
-            ViewData["salaID"] = new SelectList(_context.Salas, "id", "descricao");
+            ViewData["salaID"] = new SelectList(_context.Salas.Where(s => s.situacao == 'L'), "id", "descricao");
             return View();
         }
 
@@ -63,6 +63,11 @@ namespace BCCAlunos2024.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(atendimento);
+                Sala sala = await _context.Salas.FindAsync(atendimento.salaID);
+                sala.situacao = 'R';
+                sala.equipamentos = sala.equipamentos - 5;
+
+                atendimento.tipo = 'R';
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -165,5 +170,37 @@ namespace BCCAlunos2024.Controllers
         {
             return _context.Atendimentos.Any(e => e.id == id);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelaReserva(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var atendimento = await _context.Atendimentos
+                .Include(a => a.aluno)
+                .Include(a => a.sala)
+                .FirstOrDefaultAsync(m => m.id == id);
+            if (atendimento == null)
+            {
+                return NotFound();
+            }
+            if (atendimento.tipo == 'R')
+            {
+                Sala sala = await _context.Salas.FindAsync(atendimento.salaID);
+                sala.situacao = 'L';
+                sala.equipamentos = sala.equipamentos + 5;
+
+                atendimento.tipo = 'C';
+                atendimento.dataHora = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
     }
+
+
 }

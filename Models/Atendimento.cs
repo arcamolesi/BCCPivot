@@ -24,5 +24,8 @@ namespace BCCAlunos2024.Models
         [Display(Name = "Data/Hora: ")]
         public DateTime dataHora { get; set; }= DateTime.Now;
 
+        [Display(Name = "Tipo Atendimento: ")]
+        public char tipo { get; set; }
+
     }
 }

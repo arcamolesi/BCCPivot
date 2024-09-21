@@ -6,7 +6,7 @@ namespace BCCAlunos2024.Models
     [Table("Salas")]
     public class Sala
     {
-        public enum TipoSitucao { Liberada, Ocupada, Reservada, Manutencao, Outra}
+       // public enum TipoSitucao { Liberada, Ocupada, Reservada, Manutencao, Outra}
 
         [Display(Name ="ID: ")]
         public int id { get; set; }
@@ -20,6 +20,8 @@ namespace BCCAlunos2024.Models
         public int equipamentos { get; set; }
 
         [Display(Name = "Situação: ")]
-        public TipoSitucao situacao { get; set; }
+        // public TipoSitucao situacao { get; set; }
+        public char situacao { get; set; }
+
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BCCAlunos2024.Models;
+using static BCCAlunos2024.Models.Aluno;
 
 namespace BCCAlunos2024.Controllers
 {
@@ -47,7 +48,17 @@ namespace BCCAlunos2024.Controllers
         // GET: Alunos/Create
         public IActionResult Create()
         {
-            ViewData["cursoID"] = new SelectList(_context.Cursos, "id", "descricao");
+            var tPeriodo = Enum.GetValues(typeof(Periodo))
+                             .Cast<Periodo>()
+                             .Select(e => new SelectListItem
+                             {
+                                 Value = e.ToString(),
+                                 Text = e.ToString()
+                             });
+            ViewBag.tPeriodo = tPeriodo;
+
+
+            ViewData["ListaCursos"] = new SelectList(_context.Cursos, "id", "descricao");
             return View();
         }
 
