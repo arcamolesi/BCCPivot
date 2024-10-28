@@ -44,13 +44,13 @@ namespace BCCAlunos2024.Controllers
             contexto.Database.ExecuteSqlRaw("delete from Atendimentos");
             contexto.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Atendimentos', RESEED, 0)");
             Random rand = new Random();
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 1000; i++)
             { 
                 Atendimento atendimento = new Atendimento();
                 atendimento.alunoID = rand.Next(1,101);
                 atendimento.salaID = rand.Next(1, 7); 
                 atendimento.tipo = (rand.Next(1,3) == 1) ? 'A': 'T';
-                atendimento.dataHora = Convert.ToDateTime("01/01/2010").AddDays(rand.Next(0, 5772)).AddSeconds(rand.Next(1,86400));
+                atendimento.dataHora = Convert.ToDateTime("01/01/2010").AddDays(rand.Next(0, 5407)).AddSeconds(rand.Next(1,86400));
                 contexto.Atendimentos.Add(atendimento); 
             }
             contexto.SaveChanges(); 

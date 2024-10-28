@@ -1,0 +1,64 @@
+﻿@model IEnumerable<BCCAlunos2024.Models.Aluno>
+
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1>Filtro de Alunos</h1>
+
+<p>
+    <a asp-action="FiltrarAluno">Filtrar</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.aniversario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.curso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.periodo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int cont = 0;
+            int soma = 0;
+        }
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.aniversario)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.curso.id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.periodo)
+                </td>
+
+            </tr>
+            soma = soma + item.curso.id;
+            cont++;
+        }
+    </tbody>
+</table>
+
+<h3>Total de registros impressos: @cont</h3>
+
+<h3>Total de soma de id de registro: @soma</h3>

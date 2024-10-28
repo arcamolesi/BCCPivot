@@ -20,10 +20,15 @@ namespace BCCAlunos2024.Controllers
         }
 
         // GET: Alunos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string nome)
         {
-            var contexto = _context.Alunos.Include(a => a.curso);
-            return View(await contexto.ToListAsync());
+            List<Aluno> listaAluno = new List<Aluno>();
+
+            if (nome != null)
+                listaAluno = await _context.Alunos.Include(a => a.curso).Where(a => a.nome.Contains(nome)).ToListAsync();
+            else listaAluno = await _context.Alunos.Include(a => a.curso).ToListAsync();
+
+            return View(listaAluno);
         }
 
         // GET: Alunos/Details/5
