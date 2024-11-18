@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
+using BCCAlunos2024.Models.Consulta;
 
 namespace BCCAlunos2024.Models
 {
@@ -11,6 +12,9 @@ namespace BCCAlunos2024.Models
         public DbSet<Aluno> Alunos { get; set; }
         public DbSet<Sala> Salas { get; set; }
         public DbSet<Atendimento> Atendimentos { get; set; }
+        public DbSet<BCCAlunos2024.Models.Consulta.AtendimentoGrp> AtendimentoGrp { get; set; }
+        public DbSet<BCCAlunos2024.Models.Consulta.AtendimentoAnoMes> AtendimentoAnoMes { get; set; }
+        public DbSet<BCCAlunos2024.Models.Consulta.PivotAtendimento> PivotAtendimento { get; set; }
 
     }
 }

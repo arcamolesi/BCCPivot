@@ -1,8 +1,11 @@
 ﻿using BCCAlunos2024.Models;
+using BCCAlunos2024.Models.Consulta;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
+using BCCAlunos2024.Extra; 
 
 namespace BCCAlunos2024.Controllers
 {
@@ -11,7 +14,7 @@ namespace BCCAlunos2024.Controllers
 
         private readonly Contexto contexto;
 
-        public ConsultasController (Contexto context)
+        public ConsultasController(Contexto context)
         {
             contexto = context;
         }
@@ -29,13 +32,13 @@ namespace BCCAlunos2024.Controllers
         }
 
 
-        public IActionResult Alunos ()
+        public IActionResult Alunos()
         {
             var alunos = contexto.Alunos.Include(c => c.curso)
-                .OrderBy(o=>o.curso.descricao)
-                .ThenByDescending(p=>p.periodo)
-                .ThenBy(o1=>o1.aniversario)
-                .ToList();  
+                .OrderBy(o => o.curso.descricao)
+                .ThenByDescending(p => p.periodo)
+                .ThenBy(o1 => o1.aniversario)
+                .ToList();
             return View(alunos);
         }
 
@@ -63,5 +66,102 @@ namespace BCCAlunos2024.Controllers
 
             return View(listaAlunos);
         }
+
+        public IActionResult AgruparAtendimentoCursoSala()
+        {
+            IEnumerable<AtendimentoGrp> lstGrupoAtendimento = from item in contexto.Atendimentos
+                                   .Include(a => a.aluno).Include(c => c.aluno.curso).Include(s => s.sala)
+                                   .ToList()
+                                                              let curso = item.aluno.curso.descricao
+                                                              let sala = item.sala.descricao
+
+                                                              group item by new { curso, sala }
+                                   into grupo
+                                                              orderby grupo.Key.curso, grupo.Key.sala
+                                                              select new AtendimentoGrp
+                                                              {
+                                                                  curso = grupo.Key.curso,
+                                                                  sala = grupo.Key.sala,
+                                                                  valor = grupo.Count()
+
+
+                                                              };
+
+            return View(lstGrupoAtendimento);
+
+        }
+
+
+        public IActionResult AgruparAtendimentoAnoMes()
+        {
+            IEnumerable<AtendimentoAnoMes> lstAtendAnoMes  = from item in contexto.Atendimentos
+                                    .ToList()
+                                                              let ano = item.dataHora.Year
+                                                              let mes = item.dataHora.Month
+
+                                                              group item by new { ano, mes }
+                                   into grupo
+                                                              orderby grupo.Key.ano, grupo.Key.mes
+                                                              select new AtendimentoAnoMes
+                                                              {
+                                                                  ano = grupo.Key.ano,
+                                                                  mes = grupo.Key.mes,
+                                                                  quantidade = grupo.Count()
+                                                              };
+
+            return View(lstAtendAnoMes);
+
+        }
+
+
+        public IActionResult Pivot()
+        {
+
+            IEnumerable<AtendimentoAnoMes> lstAtendAnoMes = from item in contexto.Atendimentos
+                                    .ToList()
+                                                            let ano = item.dataHora.Year
+                                                            let mes = item.dataHora.Month
+                                                            group item by new { ano, mes }
+                                   into grupo
+                                                            orderby grupo.Key.ano, grupo.Key.mes
+                                                            select new AtendimentoAnoMes
+                                                            {
+                                                                ano = grupo.Key.ano,
+                                                                mes = grupo.Key.mes,
+                                                                quantidade = grupo.Count()
+                                                            };
+
+            //Gerar Pivot
+            var PivotTableAnoMes = lstAtendAnoMes.ToList().ToPivotTable(
+                    pivo => pivo.mes, //coluna
+                    pivo => pivo.ano, //linha
+                    pivos => (pivos.Any() ? pivos.Sum(x => Convert.ToSingle(x.quantidade)) : 0)); //valor das células
+
+            //Converter DataTable do Pivot para Lista, permitir que o asp net core, imprima depois
+            List<PivotAtendimento> lista = new List<PivotAtendimento>();
+            lista = (from DataRow linha in PivotTableInsArea.Rows
+                     select new PivotAtendimento()
+                     {
+                         ano = linha[0].ToString(),
+                         janeiro = Convert.ToSingle(linha[1]),
+                         fevereiro = Convert.ToSingle(linha[2]),
+                         marco = Convert.ToSingle(linha[3]),
+                         abril = Convert.ToSingle(linha[4]),
+                         maio = Convert.ToSingle(linha[5]),
+                         junho = Convert.ToSingle(linha[6]),
+                         julho = Convert.ToSingle(linha[7]),
+                         agosto = Convert.ToSingle(linha[8]),
+                         setembro = Convert.ToSingle(linha[9]),
+                         outubro = Convert.ToSingle(linha[10]),
+                         novembro = Convert.ToSingle(linha[11]),
+                         dezembro = Convert.ToSingle(linha[12]),
+                         total = Convert.ToSingle(linha[1]) + Convert.ToSingle(linha[2]) + Convert.ToSingle(linha[3]) + Convert.ToSingle(linha[4]) + Convert.ToSingle(linha[5]) + Convert.ToSingle(linha[6]) +
+                                 Convert.ToSingle(linha[7]) + Convert.ToSingle(linha[8]) + Convert.ToSingle(linha[9]) + Convert.ToSingle(linha[10]) + Convert.ToSingle(linha[11]) + Convert.ToSingle(linha[12]),
+                         }).ToList();
+
+            return View(lista);
+        }
+
+
     }
 }
